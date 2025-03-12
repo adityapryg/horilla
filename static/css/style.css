@@ -532,6 +532,14 @@ form label {
     }
 }
 
+.oh-tabs__tab--active {
+    border-right: solid 1px #dddddd !important;
+}
+
+.row-dropdown:hover {
+    border: solid 1px #dddddddd !important;
+}
+
 .custom-radio-container input[type="radio"] {
     position: absolute;
     opacity: 0;
@@ -552,7 +560,7 @@ form label {
 }
 
 /* Selected radio */
-.custom-radio-container input[type="radio"]:checked + .custom-radio-checkmark {
+.custom-radio-container input[type="radio"]:checked+.custom-radio-checkmark {
     background-color: red;
     border-color: red;
 }
@@ -564,7 +572,7 @@ form label {
     display: none;
 }
 
-.custom-radio-container input[type="radio"]:checked + .custom-radio-checkmark::after {
+.custom-radio-container input[type="radio"]:checked+.custom-radio-checkmark::after {
     display: block;
     width: 10px;
     height: 10px;
