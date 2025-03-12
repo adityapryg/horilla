@@ -26,7 +26,7 @@
     </button>
 </div>
 <div class="oh-modal__dialog-body">
-    <form hx-post="{%url 'asset-batch-update' batch_id=asset_batch_update_form.instance.id %}" hx-target="#objectUpdateModalTarget" class="oh-profile-section pt-1">
+    <form hx-post="{%url 'asset-batch-update' asset_batch_update_form.instance.id %}" hx-target="#objectUpdateModalTarget" class="oh-profile-section pt-1">
         {% csrf_token %}
         <div class="oh-input__group">
             <label class="oh-input__label" for="objective">{% trans "Batch Number" %}</label>

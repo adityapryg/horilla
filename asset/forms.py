@@ -98,6 +98,17 @@ class AssetForm(ModelForm):
                 }
             ),
         }
+        labels = {
+            "asset_name": "Asset Name",
+            "asset_description": "Description",
+            "asset_tracking_id": "Tracking ID",
+            "asset_purchase_date": "Purchase Date",
+            "expiry_date": "Expiry Date",
+            "asset_purchase_cost": "Cost",
+            "asset_category_id": "Category",
+            "asset_status": "Status",
+            "asset_lot_number_id": "Batch Number",
+        }
 
     def __init__(self, *args, **kwargs):
         request = getattr(_thread_locals, "request")
@@ -198,6 +209,19 @@ class AssetReportForm(ModelForm):
     - __init__: Initializes the form, disabling the 'asset_id' field.
     """
 
+    file = forms.FileField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "name": "file",
+                "type": "File",
+                "class": "form-control",
+                "multiple": "True",
+                "accept": ".jpeg, .jpg, .png, .pdf",
+            }
+        ),
+    )
+
     class Meta:
         """
         Metadata options for the AssetReportForm.
@@ -209,10 +233,7 @@ class AssetReportForm(ModelForm):
         """
 
         model = AssetReport
-        fields = [
-            "title",
-            "asset_id",
-        ]
+        fields = ["title", "asset_id", "file"]
         exclude = ["is_active"]
 
     def __init__(self, *args, **kwargs):
@@ -224,13 +245,19 @@ class AssetReportForm(ModelForm):
         - **kwargs: Arbitrary keyword arguments.
         """
         super().__init__(*args, **kwargs)
-        self.fields["asset_id"].widget.attrs["disabled"] = "disabled"
+        # self.fields["asset_id"].widget.attrs["disabled"] = "disabled"
 
 
 class AssetCategoryForm(ModelForm):
     """
     A form for creating and updating AssetCategory instances.
     """
+
+    cols = {
+        "asset_category_name": 12,
+        "asset_category_description": 12,
+        "company_id": 12,
+    }
 
     class Meta:
         """
@@ -266,6 +293,8 @@ class AssetRequestForm(ModelForm):
     """
     A Django ModelForm for creating and updating AssetRequest instances.
     """
+
+    cols = {"requested_employee_id": 12, "asset_category_id": 12, "description": 12}
 
     class Meta:
         """
@@ -307,10 +336,16 @@ class AssetRequestForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
+        # user = kwargs.pop("user", None)
+        request = getattr(_thread_locals, "request", None)
+        user = request.user
+        super(AssetRequestForm, self).__init__(
+            *args,
+            **kwargs,
+        )
         reload_queryset(self.fields)
         if user is not None and user.has_perm("asset.add_assetrequest"):
+
             self.fields["requested_employee_id"].queryset = Employee.objects.all()
             self.fields["requested_employee_id"].initial = Employee.objects.filter(
                 id=user.employee_get.id
@@ -329,12 +364,27 @@ class AssetAllocationForm(ModelForm):
     A Django ModelForm for creating and updating AssetAssignment instances.
     """
 
+    cols = {
+        "assigned_to_employee_id": 12,
+        "asset_id": 12,
+        "assigned_by_employee_id": 12,
+    }
+
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        request = getattr(_thread_locals, "request", None)
+        user = request.user
+        super(AssetAllocationForm, self).__init__(*args, **kwargs)
         reload_queryset(self.fields)
         self.fields["asset_id"].queryset = Asset.objects.filter(
             asset_status="Available"
         )
+        self.fields["assigned_by_employee_id"].queryset = Employee.objects.all()
+        self.fields["assigned_by_employee_id"].initial = Employee.objects.filter(
+            id=user.employee_get.id
+        ).first()
+        self.fields["asset_condition_img"] = MultipleFileField()
+        self.fields["asset_condition_img"].label = "Asset Condition Images"
+        self.fields["asset_condition_img"].required = True
 
         self.fields["assign_images"] = MultipleFileField()
         self.fields["assign_images"].required = True
@@ -357,6 +407,7 @@ class AssetAllocationForm(ModelForm):
             "return_condition",
             "assigned_date",
             "return_images",
+            "assign_images",
             "is_active",
         ]
         widgets = {
@@ -448,6 +499,8 @@ class AssetBatchForm(ModelForm):
     A Django ModelForm for creating or updating AssetLot instances.
     """
 
+    cols = {"lot_description": 12, "lot_number": 12}
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         reload_queryset(self.fields)
@@ -464,21 +517,19 @@ class AssetBatchForm(ModelForm):
         """
 
         model = AssetLot
-        fields = "__all__"
+        fields = ["lot_number", "lot_description"]
         widgets = {
             "lot_number": forms.TextInput(
-                attrs={"placeholder": "A12345.", "class": "oh-input w-100"}
+                attrs={"placeholder": "Lot Number", "class": "oh-input w-100"}
             ),
             "lot_description": forms.Textarea(
                 attrs={
                     "type": "text",
-                    "placeholder": _(
-                        "A batch of 50 laptops, consisting of Lenovo ThinkPad T480s\
-                              and Dell XPS 13."
-                    ),
+                    "placeholder": _("Lot description"),
                     "class": "oh-input oh-input--textarea oh-input--block",
                     "rows": 3,
                     "cols": 40,
                 }
             ),
         }
+        labels = {"lot_number": "Batch Number", "lot_description": "Description"}
