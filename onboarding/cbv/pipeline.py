@@ -326,6 +326,17 @@ class CandidateList(HorillaListView):
 
     actions = [
         {
+            "action": _("Allocations"),
+            "icon": "clipboard-outline",
+            "attrs": """
+                    class="oh-btn oh-btn--danger-outline oh-btn--light-bkg w-100"
+                    hx-get = "{candidate_id__get_send_mail}"
+                    data-toggle="oh-modal-toggle"
+                    data-target="#objectDetailsModal"
+                    hx-target="#objectDetailsModalTarget"
+                """,
+        },
+        {
             "action": _("Send Mail"),
             "icon": "mail-open-outline",
             "attrs": """
@@ -349,7 +360,7 @@ class CandidateList(HorillaListView):
         },
         {
             "action": _("Document Request"),
-            "icon": "clipboard-outline",
+            "icon": "document-attach-outline",
             "attrs": """
                      hx-get="{candidate_id__get_document_request}"
                     data-target="#genericModal"

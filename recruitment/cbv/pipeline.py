@@ -307,7 +307,7 @@ class CandidateList(HorillaListView):
         },
         {
             "action": _("Document Request"),
-            "icon": "clipboard-outline",
+            "icon": "document-attach-outline",
             "attrs": """
                      hx-get="{get_document_request}"
                     data-target="#genericModal"

@@ -245,7 +245,7 @@ class CardCandidates(HorillaCardView):
         self.search_url = reverse("card-candidate")
 
     details = {
-        "image_src": "employee_id__get_avatar",
+        "image_src": "get_avatar",
         "title": "{get_full_name}",
         "subtitle": "{email} <br> {get_job_position}",
     }
