@@ -30,6 +30,7 @@ from base.models import (
 from employee.models import Employee, EmployeeWorkInformation
 from horilla import horilla_middlewares
 from horilla.horilla_middlewares import _thread_locals
+from horilla.methods import get_horilla_model_class
 from horilla.models import HorillaModel
 from horilla_audit.methods import get_diff
 from horilla_audit.models import HorillaAuditInfo, HorillaAuditLog
